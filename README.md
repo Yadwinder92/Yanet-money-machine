@@ -1,0 +1,2 @@
+# Yanet-money-machine
+Yanet

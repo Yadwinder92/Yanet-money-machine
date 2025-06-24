@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yanet - Enhanced Bilingual AI Money Machine</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gurmukhi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .language-controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .language-btn {
+        background: rgba(255,255,255,0.2);
+        border: 2px solid white;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+    }
+
+    .language-btn.active {
+        background: white;
+        color: #667eea;
+    }
+
+    .main-title {
+        font-size: 2.5rem;
+        margin: 20px 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .avatar-section {
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    .avatar-video {
+        width: 100%;
+        height: 300px;
+        border-radius: 15px;
+        background: rgba(0,0,0,0.3);
+        object-fit: cover;
+        margin-bottom: 15px;
+    }
+
+    .avatar-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 300px;
+        background: linear-gradient(45deg, rgba(0,0,0,0.3), rgba(102, 126, 234, 0.1));
+        border-radius: 15px;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    .controls-section {
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 25px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        height: fit-content;
+    }
+
+    .control-group {
+        margin-bottom: 20px;
+    }
+
+    .control-group h3 {
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        margin: 5px;
+        min-width: 140px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .voice-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .language-select {
+        padding: 8px 12px;
+        border-radius: 20px;
+        border: none;
+        background: rgba(255,255,255,0.9);
+        color: #333;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+    }
+
+    .dashboard-card {
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+
+    .dashboard-card h3 {
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .money-amount {
+        font-size: 2em;
+        font-weight: bold;
+        color: #4ade80;
+        margin: 10px 0;
+    }
+
+    .response-area {
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        backdrop-filter: blur(10px);
+        min-height: 100px;
+    }
+
+    .coding-output {
+        background: rgba(0,0,0,0.3);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 15px 0;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .chart-container {
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        backdrop-filter: blur(10px);
+    }
+
+    .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    .status-online {
+        background: #4ade80;
+    }
+
+    .status-offline {
+        background: #ef4444;
+    }
+
+    .punjabi-text {
+        font-family: 'Noto Sans Gurmukhi', Arial, sans-serif;
+        font-size: 1.1em;
+        line-height: 1.6;
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.9);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 25px;
+        z-index: 1000;
+        display: none;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="language-controls">
+                <button class="language-btn active" onclick="switchLanguage('en')" id="btn-en">English</button>
+                <button class="language-btn" onclick="switchLanguage('pa')" id="btn-pa">ਪੰਜਾਬੀ</button>
+            </div>
+            <h1 class="main-title" id="main-title">🔥 Yanet - Enhanced Bilingual AI Money Machine</h1>
+            <p class="subtitle" id="subtitle">Advanced trading APIs + HeyGen Avatar + Bilingual support = $750+ weekly!</p>
+        </div>
+
+```
+    <div class="main-content">
+        <div class="avatar-section">
+            <video id="avatarVideo" class="avatar-video" autoplay muted style="display: none;"></video>
+            <div class="avatar-placeholder" id="avatarPlaceholder">
+                <p id="placeholder-text">🎭 Click "Start Avatar" to begin bilingual interaction</p>
+            </div>
+            
+            <div class="voice-controls">
+                <select id="language" class="language-select">
+                    <option value="en">English Voice</option>
+                    <option value="pa">Punjabi Voice</option>
+                </select>
+                <button class="btn" onclick="startRecording()" id="record-btn">🎤 Speak</button>
+                <button class="btn" onclick="startAvatar()" id="avatar-btn">🎭 Start Avatar</button>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="control-group">
+                <h3 id="money-title">💰 Money Making</h3>
+                <button class="btn" onclick="runAutomation()" id="automation-btn">🚀 Run Automation</button>
+                <button class="btn" onclick="getEarnings()" id="earnings-btn">📊 Show Earnings</button>
+                <button class="btn" onclick="getSystemStatus()" id="status-btn">⚙️ System Status</button>
+            </div>
+
+            <div class="control-group">
+                <h3 id="coding-title">💻 AI Coding</h3>
+                <button class="btn" onclick="generateWebsite()" id="website-btn">🌐 Generate Website</button>
+                <button class="btn" onclick="generateApp()" id="app-btn">📱 Generate App</button>
+                <button class="btn" onclick="codeAssistant()" id="code-btn">🤖 Code Assistant</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="dashboard-card">
+            <h3 id="today-earnings">Today's Earnings</h3>
+            <div class="money-amount" id="daily-amount">$0.00</div>
+            <p id="daily-status">Getting started...</p>
+        </div>
+        <div class="dashboard-card">
+            <h3 id="weekly-progress">Weekly Progress</h3>
+            <div class="money-amount" id="weekly-amount">$0.00</div>
+            <p id="weekly-status">0% of $750 target</p>
+        </div>
+        <div class="dashboard-card">
+            <h3 id="system-status">System Status</h3>
+            <p><span class="status-indicator status-offline" id="avatar-status"></span><span id="avatar-label">Avatar: Offline</span></p>
+            <p><span class="status-indicator status-offline" id="trading-status"></span><span id="trading-label">Trading: Ready</span></p>
+            <p><span class="status-indicator status-offline" id="api-status"></span><span id="api-label">APIs: Checking</span></p>
+        </div>
+    </div>
+
+    <div class="response-area" id="response">
+        <h3 id="response-title">💬 Yanet Response</h3>
+        <div id="response-content">Waiting for your input...</div>
+    </div>
+
+    <div class="response-area" id="earnings">
+        <h3 id="earnings-title">💰 Earnings Summary</h3>
+        <div id="earnings-content">Click "Show Earnings" to see your money-making progress!</div>
+    </div>
+
+    <div class="response-area" id="coding">
+        <h3 id="coding-title">💻 Coding Output</h3>
+        <div class="coding-output" id="coding-content">AI coding assistant ready!</div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="earningsChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+    const socket = io();
+    let currentLanguage = 'en';
+    let isRecording = false;
+    let isAvatarActive = false;
+    let chart;
+
+    // Language translations
+    const translations = {
+        en: {
+            'main-title': '🔥 Yanet - Enhanced Bilingual AI Money Machine',
+            'subtitle': 'Advanced trading APIs + HeyGen Avatar + Bilingual support = $750+ weekly!',
+            'money-title': '💰 Money Making',
+            'coding-title': '💻 AI Coding',
+            'automation-btn': '🚀 Run Automation',
+            'earnings-btn': '📊 Show Earnings',
+            'status-btn': '⚙️ System Status',
+            'website-btn': '🌐 Generate Website',
+            'app-btn': '📱 Generate App',
+            'code-btn': '🤖 Code Assistant',
+            'record-btn': '🎤 Speak',
+            'avatar-btn': '🎭 Start Avatar',
+            'placeholder-text': '🎭 Click "Start Avatar" to begin bilingual interaction',
+            'today-earnings': "Today's Earnings",
+            'weekly-progress': 'Weekly Progress',
+            'system-status': 'System Status',
+            'response-title': '💬 Yanet Response',
+            'earnings-title': '💰 Earnings Summary',
+            'coding-title': '💻 Coding Output'
+        },
+        pa: {
+            'main-title': '🔥 ਯਾਨੇਟ - ਵਿਕਸਿਤ ਦੋਭਾਸ਼ੀ AI ਪੈਸਾ ਮਸ਼ੀਨ',
+            'subtitle': 'ਐਡਵਾਂਸਡ ਟ੍ਰੇਡਿੰਗ APIs + HeyGen ਅਵਤਾਰ + ਦੋਭਾਸ਼ੀ ਸਹਾਇਤਾ = ਹਫ਼ਤਾਵਾਰ $750+!',
+            'money-title': '💰 ਪੈਸਾ ਕਮਾਉਣਾ',
+            'coding-title': '💻 AI ਕੋਡਿੰਗ',
+            'automation-btn': '🚀 ਆਟੋਮੇਸ਼ਨ ਚਲਾਓ',
+            'earnings-btn': '📊 ਕਮਾਈ ਦਿਖਾਓ',
+            'status-btn': '⚙️ ਸਿਸਟਮ ਸਥਿਤੀ',
+            'website-btn': '🌐 ਵੈਬਸਾਈਟ ਬਣਾਓ',
+            'app-btn': '📱 ਐਪ ਬਣਾਓ',
+            'code-btn': '🤖 ਕੋਡ ਸਹਾਇਕ',
+            'record-btn': '🎤 ਬੋਲੋ',
+            'avatar-btn': '🎭 ਅਵਤਾਰ ਸ਼ੁਰੂ ਕਰੋ',
+            'placeholder-text': '🎭 ਦੋਭਾਸ਼ੀ ਗੱਲਬਾਤ ਸ਼ੁਰੂ ਕਰਨ ਲਈ "ਅਵਤਾਰ ਸ਼ੁਰੂ ਕਰੋ" ਤੇ ਕਲਿੱਕ ਕਰੋ',
+            'today-earnings': 'ਅੱਜ ਦੀ ਕਮਾਈ',
+            'weekly-progress': 'ਹਫ਼ਤਾਵਾਰੀ ਪ੍ਰਗਤੀ',
+            'system-status': 'ਸਿਸਟਮ ਸਥਿਤੀ',
+            'response-title': '💬 ਯਾਨੇਟ ਜਵਾਬ',
+            'earnings-title': '💰 ਕਮਾਈ ਸਾਰਾਂਸ਼',
+            'coding-title': '💻 ਕੋਡਿੰਗ ਆਉਟਪੁੱਟ'
+        }
+    };
+
+    // Language switching
+    function switchLanguage(lang) {
+        if (lang === currentLanguage) return;
+        
+        currentLanguage = lang;
+        
+        // Update buttons
+        document.querySelectorAll('.language-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${lang}`).classList.add('active');
+        
+        // Update language select
+        document.getElementById('language').value = lang;
+        
+        // Update all text
+        Object.keys(translations[lang]).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = translations[lang][id];
+                if (lang === 'pa') {
+                    element.classList.add('punjabi-text');
+                } else {
+                    element.classList.remove('punjabi-text');
+                }
+            }
+        });
+        
+        // Notify backend
+        socket.emit('switch_language', { language: lang });
+        showNotification(`Language switched to ${lang === 'en' ? 'English' : 'ਪੰਜਾਬੀ'}`);
+    }
+
+    // Avatar functions
+    function startAvatar() {
+        if (isAvatarActive) {
+            showNotification('Avatar is already active!');
+            return;
+        }
+        
+        document.getElementById('avatar-btn').disabled = true;
+        document.getElementById('avatar-btn').textContent = 'Starting...';
+        
+        socket.emit('start_avatar');
+    }
+
+    // Voice recording
+    async function startRecording() {
+        if (isRecording) return;
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new MediaRecorder(stream);
+            let chunks = [];
+            
+            isRecording = true;
+            document.getElementById('record-btn').textContent = '🔴 Recording...';
+            document.getElementById('record-btn').disabled = true;
+            
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.onstop = async () => {
+                const blob = new Blob(chunks, { type: 'audio/wav' });
+                const reader = new FileReader();
+                reader.onload = () => {
+                    socket.emit('voice_input', {
+                        audio: reader.result.split(',')[1],
+                        lang: document.getElementById('language').value,
+                        user_id: 'default_user'
+                    });
+                };
+                reader.readAsDataURL(blob);
+                
+                isRecording = false;
+                document.getElementById('record-btn').textContent = translations[currentLanguage]['record-btn'];
+                document.getElementById('record-btn').disabled = false;
+            };
+            
+            recorder.start();
+            setTimeout(() => recorder.stop(), 5000); // 5 second recording
+            
+        } catch (error) {
+            showNotification('Microphone access denied');
+            isRecording = false;
+            document.getElementById('record-btn').textContent = translations[currentLanguage]['record-btn'];
+            document.getElementById('record-btn').disabled = false;
+        }
+    }
+
+    // Automation functions
+    function runAutomation() {
+        socket.emit('run_automation', { 
+            user_type: 'beginner', 
+            skills: ['voiceover'] 
+        });
+        showNotification('Starting money-making automation...');
+    }
+
+    function getEarnings() {
+        socket.emit('get_earnings', { 
+            user_type: 'beginner', 
+            skills: ['voiceover'] 
+        });
+    }
+
+    function getSystemStatus() {
+        socket.emit('get_system_status');
+    }
+
+    // Coding functions
+    function generateWebsite() {
+        socket.emit('generate_website', { 
+            project_type: 'portfolio', 
+            requirements: 'Modern portfolio with dark theme and animations' 
+        });
+    }
+
+    function generateApp() {
+        socket.emit('generate_app', { 
+            project_type: 'todo', 
+            framework: 'react-native', 
+            requirements: 'Todo app with bilingual support' 
+        });
+    }
+
+    function codeAssistant() {
+        socket.emit('code_assistant', { 
+            query: 'Write a Python function for trading signal analysis', 
+            language: 'python' 
+        });
+    }
+
+    // Chart functions
+    function updateChart(profit) {
+        const ctx = document.getElementById('earningsChart').getContext('2d');
+        if (chart) chart.destroy();
+        
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Weekly Profit Target'],
+                datasets: [{
+                    label: 'Estimated Profit ($)',
+                    data: [profit],
+                    backgroundColor: ['#4ade80'],
+                    borderColor: ['#22c55e'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 1000,
+                        ticks: { color: 'white' }
+                    },
+                    x: { ticks: { color: 'white' } }
+                },
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+    }
+
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000);
+    }
+
+    function updateStatusIndicator(elementId, online) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.className = `status-indicator ${online ? 'status-online' : 'status-offline'}`;
+        }
+    }
+
+    // Socket event handlers
+    socket.on('connect', () => {
+        showNotification('Connected to Yanet!');
+        updateStatusIndicator('api-status', true);
+    });
+
+    socket.on('voice_response', (data) => {
+        const responseDiv = document.getElementById('response-content');
+        responseDiv.textContent = data.text;
+        if (data.language === 'pa') {
+            responseDiv.classList.add('punjabi-text');
+        } else {
+            responseDiv.classList.remove('punjabi-text');
+        }
+        
+        // Handle avatar video if available
+        if (data.avatar_speaking && !data.demo_mode) {
+            showNotification('Yanet is speaking!');
+        }
+    });
+
+    socket.on('avatar_started', (data) => {
+        if (data.success) {
+            isAvatarActive = true;
+            const video = document.getElementById('avatarVideo');
+            const placeholder = document.getElementById('avatarPlaceholder');
+            
+            if (data.demo_mode) {
+                placeholder.innerHTML = '<p>✅ Avatar Active (Demo Mode)</p>';
+                showNotification('Avatar started in demo mode!');
+            } else {
+                video.src = data.stream_url;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                showNotification('Avatar started successfully!');
+            }
+            
+            updateStatusIndicator('avatar-status', true);
+            document.getElementById('avatar-btn').textContent = translations[currentLanguage]['avatar-btn'];
+            document.getElementById('avatar-btn').disabled = false;
+        }
+    });
+
+    socket.on('avatar_error', (data) => {
+        showNotification('Avatar error: ' + data.error);
+        document.getElementById('avatar-btn').textContent = translations[currentLanguage]['avatar-btn'];
+        document.getElementById('avatar-btn').disabled = false;
+    });
+
+    socket.on('language_switched', (data) => {
+        if (data.success) {
+            showNotification(data.greeting);
+        }
+    });
+
+    socket.on('automation_response', (data) => {
+        const earningsDiv = document.getElementById('earnings-content');
+        earningsDiv.innerHTML = `
+            <strong>Actions Completed:</strong><br>
+            ${data.actions.map(action => `• ${action}`).join('<br>')}<br><br>
+            <strong>Total Estimated Profit: $${data.total_profit}</strong>
+        `;
+        updateChart(data.total_profit);
+        updateStatusIndicator('trading-status', data.trading_active);
+    });
+
+    socket.on('earnings_response', (data) => {
+        const summary = data.summary;
+        const earningsDiv = document.getElementById('earnings-content');
+        
+        earningsDiv.innerHTML = `
+            <strong>Income Ideas:</strong><br>
+            ${summary.income_ideas.map(idea => `• ${idea.idea} - $${idea.est_earnings}/week`).join('<br>')}<br><br>
+            <strong>Trading Performance:</strong><br>
+            • Mode: ${summary.trading?.mode || 'Demo'}<br>
+            • Daily Trades: ${summary.trading?.daily_trades || 0}<br>
+            • Daily Profit: $${summary.trading?.daily_profit || 0}<br><br>
+            <strong>Total Weekly Target: $${summary.total_est_profit}</strong>
+        `;
+        
+        document.getElementById('daily-amount').textContent = `$${summary.trading?.daily_profit || 0}`;
+        document.getElementById('weekly-amount').textContent = `$${summary.total_est_profit}`;
+        document.getElementById('weekly-status').textContent = `${((summary.total_est_profit / 750) * 100).toFixed(1)}% of $750 target`;
+        
+        updateChart(summary.total_est_profit);
+    });
+
+    socket.on('website_response', (data) => {
+        const codingDiv = document.getElementById('coding-content');
+        if (data.status === 'success') {
+            codingDiv.textContent = JSON.stringify(data.files, null, 2);
+            showNotification('Website generated successfully!');
+        } else {
+            codingDiv.textContent = `Error: ${data.message}`;
+        }
+    });
+
+    socket.on('app_response', (data) => {
+        const codingDiv = document.getElementById('coding-content');
+        if (data.status === 'success') {
+            codingDiv.textContent = JSON.stringify({
+                ...data.files, 
+                setup_instructions: data.setup_instructions
+            }, null, 2);
+            showNotification('App generated successfully!');
+        } else {
+            codingDiv.textContent = `Error: ${data.message}`;
+        }
+    });
+
+    socket.on('code_response', (data) => {
+        const codingDiv = document.getElementById('coding-content');
+        if (data.status === 'success') {
+            codingDiv.textContent = `Code:\n${data.code}\n\nExplanation:\n${data.explanation}`;
+            showNotification('Code generated successfully!');
+        } else {
+            codingDiv.textContent = `Error: ${data.message}`;
+        }
+    });
+
+    socket.on('system_status', (data) => {
+        updateStatusIndicator('avatar-status', data.avatar.active);
+        updateStatusIndicator('trading-status', !data.trading.demo_mode);
+        updateStatusIndicator('api-status', data.apis.polygon || data.apis.alpha_vantage);
+        
+        const statusInfo = `
+            Avatar: ${data.avatar.active ? 'Active' : 'Offline'} (${data.avatar.language})
+            Trading: ${data.trading.mode} mode ($${data.trading.balance})
+            APIs: ${Object.values(data.apis).filter(Boolean).length}/${Object.keys(data.apis).length} connected
+        `;
+        
+        document.getElementById('response-content').textContent = statusInfo;
+    });
+
+    socket.on('error', (data) => {
+        showNotification('Error: ' + data.message);
+        document.getElementById('response-content').textContent = 'Error: ' + data.message;
+    });
+
+    // Initialize
+    switchLanguage('en');
+    updateChart(0);
+</script>
+```
+
+</body>
+</html>
